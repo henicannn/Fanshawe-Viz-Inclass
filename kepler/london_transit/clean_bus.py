@@ -7,26 +7,25 @@ except:
     pass
 
 # %% Import all packages
-import json  
 import pandas as pd
-from pandas.io.json import json_normalize
 
 # %% Import Data
-stops = pd.read_csv('./data/September-2018.csv')
-stops.head()
+stops = pd.read_csv('./data/stops.csv')
+trips = pd.read_csv('./data/trips.csv')
+stop_times = pd.read_csv('./data/stop_times.csv')
 
+print(stops, trips, stop_times)
 
-# %% Count how many routes
-stops['Route Count'] = stops['Routes'].str.count(',') +1
-stops.head()
+# %% Merge stops into stop_times by stop_id
+
+stops_merge = stop_times.merge(
+    stops[[ 'stop_id', 'stop_name', 'stop_lat', 'stop_lon', 'stop_code']], on='stop_id')
+stops_merge.head()
+# stop_merge.shape
+
+# %% Merge trips into stops_merge by trip_id
+trips_merge = stops_merge.merge(
+    trips[['trip_id', 'route_id']], on='trip_id')
+trips_merge.head()
 
 # %%
-# stations[['latitude','longitude']] = pd.DataFrame(stations['Coords'].tolist(),index=stations.index)
-# stations.head()
-
-# %% 
-stations = stations.drop(['Coords'], axis=1)
-stations.head()
-
-# %%
-stops.to_csv('./data/stops.csv',index=False)
